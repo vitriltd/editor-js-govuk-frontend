@@ -28,6 +28,7 @@ function govukAssets(): Plugin {
 
 export default defineConfig({
   root: 'demo',
+  base: process.env.CI ? '/editor-js-govuk-frontend/' : undefined,
   plugins: [govukAssets()],
   server: {
     port: 3000,
