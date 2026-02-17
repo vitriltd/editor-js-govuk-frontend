@@ -1,0 +1,164 @@
+/**
+ * Editor-specific styles for GOV.UK Frontend Editor.js plugin.
+ * These styles only affect the editing experience and are NOT part of
+ * the final rendered output.
+ */
+
+/* ============================================================
+   Content-editable elements
+   ============================================================ */
+
+.govuk-editor-block [contenteditable="true"] {
+  outline: none;
+  border-radius: 2px;
+  transition: box-shadow 0.15s ease;
+  min-height: 1em;
+}
+
+.govuk-editor-block [contenteditable="true"]:focus {
+  box-shadow: 0 0 0 3px #fd0, 0 0 0 6px #0b0c0c;
+}
+
+/* Placeholder text for empty contenteditable elements */
+.govuk-editor-block [contenteditable="true"].govuk-editor-block--empty::before {
+  content: attr(data-placeholder);
+  color: #b1b4b6;
+  pointer-events: none;
+  font-style: italic;
+}
+
+/* ============================================================
+   Details: forced open in edit mode
+   ============================================================ */
+
+.govuk-editor-details--forced-open > summary {
+  cursor: text;
+}
+
+/* ============================================================
+   Accordion: editing mode
+   ============================================================ */
+
+.govuk-editor-accordion--editing .govuk-accordion__section-content {
+  display: block !important;
+}
+
+.govuk-editor-accordion--editing .govuk-accordion__section-header {
+  position: relative;
+}
+
+.govuk-editor-accordion-remove {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+}
+
+/* ============================================================
+   Tabs: editing mode
+   ============================================================ */
+
+.govuk-editor-tabs--editing .govuk-tabs__list-item {
+  cursor: pointer;
+  position: relative;
+}
+
+.govuk-editor-tab-remove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+}
+
+/* ============================================================
+   Add/Remove buttons
+   ============================================================ */
+
+.govuk-editor-add-button {
+  display: inline-block;
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 5px 12px;
+  font-family: "GDS Transport", arial, sans-serif;
+  font-size: 14px;
+  color: #1d70b8;
+  background: transparent;
+  border: 1px dashed #1d70b8;
+  border-radius: 3px;
+  cursor: pointer;
+  -webkit-font-smoothing: antialiased;
+}
+
+.govuk-editor-add-button:hover {
+  background: #f3f2f1;
+  color: #003078;
+  border-color: #003078;
+}
+
+.govuk-editor-remove-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 14px;
+  line-height: 1;
+  color: #d4351c;
+  background: transparent;
+  border: 1px solid #d4351c;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.15s ease;
+}
+
+.govuk-editor-remove-button:hover {
+  opacity: 1;
+  background: #d4351c;
+  color: white;
+}
+
+/* ============================================================
+   Table: editing controls
+   ============================================================ */
+
+.govuk-editor-table-container {
+  overflow-x: auto;
+}
+
+.govuk-editor-table-action {
+  width: 30px;
+  text-align: center;
+  border-bottom: none !important;
+}
+
+.govuk-editor-table-controls {
+  display: flex;
+  gap: 0;
+}
+
+/* ============================================================
+   Summary list: editing styles
+   ============================================================ */
+
+.govuk-editor-summary-list-container .govuk-summary-list__actions {
+  width: 30px;
+  text-align: center;
+}
+
+/* ============================================================
+   Button: editing mode (rendered as div)
+   ============================================================ */
+
+.govuk-editor-block .govuk-button[contenteditable="true"] {
+  cursor: text;
+  user-select: text;
+}
+
+/* ============================================================
+   Inline links: match GOV.UK component styles during editing
+   ============================================================ */
+
+.govuk-notification-banner--success [contenteditable="true"] a {
+  color: #00703c;
+}

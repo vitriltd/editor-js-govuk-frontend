@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Export Output — Editor.js GOV.UK Frontend Plugin</title>
+  <link rel="stylesheet" href="./govuk.css">
+  <style>
+    body {
+      font-family: "GDS Transport", arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+      background: #f3f2f1;
+    }
+    .demo-header {
+      background: #1d70b8;
+      color: white;
+      padding: 15px 20px;
+    }
+    .demo-header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .demo-header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .demo-header a {
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      padding: 6px 16px;
+      border: 2px solid white;
+      border-radius: 2px;
+    }
+    .demo-header a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .demo-container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Tabs */
+    .output-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #b1b4b6;
+      margin-bottom: 0;
+    }
+    .output-tab {
+      padding: 12px 20px;
+      font-family: "GDS Transport", arial, sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: #1d70b8;
+      background: transparent;
+      border: none;
+      border-bottom: 4px solid transparent;
+      cursor: pointer;
+      margin-bottom: -1px;
+    }
+    .output-tab:hover {
+      color: #003078;
+      background: #f3f2f1;
+    }
+    .output-tab.active {
+      color: #0b0c0c;
+      font-weight: 700;
+      border-bottom-color: #1d70b8;
+      background: white;
+    }
+
+    /* Panels */
+    .output-panel {
+      display: none;
+      background: white;
+      border: 1px solid #b1b4b6;
+      border-top: none;
+    }
+    .output-panel.active {
+      display: block;
+    }
+
+    /* Rendered HTML panel */
+    .output-rendered {
+      padding: 30px;
+    }
+
+    /* Code panels */
+    .output-code {
+      margin: 0;
+      padding: 20px;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow-x: auto;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: white;
+      color: #0b0c0c;
+    }
+
+    /* Empty state */
+    .output-empty {
+      padding: 40px;
+      text-align: center;
+      color: #505a5f;
+      font-size: 16px;
+    }
+    .output-empty a {
+      color: #1d70b8;
+    }
+  </style>
+</head>
+<body class="govuk-frontend-supported">
+  <div class="demo-header">
+    <div class="demo-header-inner">
+      <h1>Export Output</h1>
+      <a href="index.html">Back to editor</a>
+    </div>
+  </div>
+
+  <div class="demo-container">
+    <div class="output-tabs" role="tablist">
+      <button class="output-tab active" role="tab" aria-selected="true" data-tab="rendered">Rendered HTML</button>
+      <button class="output-tab" role="tab" aria-selected="false" data-tab="markup">HTML Markup</button>
+      <button class="output-tab" role="tab" aria-selected="false" data-tab="json">Editor.js JSON</button>
+    </div>
+
+    <div id="panel-rendered" class="output-panel active" role="tabpanel">
+      <div class="output-rendered" id="rendered-content"></div>
+    </div>
+
+    <div id="panel-markup" class="output-panel" role="tabpanel">
+      <pre class="output-code"><code class="language-html" id="markup-content"></code></pre>
+    </div>
+
+    <div id="panel-json" class="output-panel" role="tabpanel">
+      <div id="json-content" style="height: 80vh;"></div>
+    </div>
+  </div>
+
+  <script type="module" src="./output.ts"></script>
+</body>
+</html>

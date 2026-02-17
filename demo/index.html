@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" class="govuk-template">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editor.js GOV.UK Frontend Plugin — Demo</title>
+  <link rel="stylesheet" href="./govuk.css">
+  <style>
+    body {
+      font-family: "GDS Transport", arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+      background: #f3f2f1;
+    }
+    .demo-header {
+      background: #1d70b8;
+      color: white;
+      padding: 15px 20px;
+    }
+    .demo-header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .demo-badge {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border: 2px solid white;
+      border-radius: 2px;
+    }
+    .demo-header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .demo-header p {
+      margin: 5px 0 0;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+    .demo-container {
+      max-width: 960px;
+      margin: 20px auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .demo-panel {
+      flex: 1;
+      min-width: 0;
+      background: white;
+      border: 1px solid #b1b4b6;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .demo-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 20px;
+    }
+    .demo-sidebar .govuk-button--export {
+      width: 100%;
+      font-size: 16px;
+      padding: 10px 16px;
+    }
+    .demo-panel-header {
+      background: #f3f2f1;
+      border-bottom: 1px solid #b1b4b6;
+      padding: 10px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .demo-panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .demo-panel-body {
+      padding: 20px;
+    }
+    #editorjs {
+      min-height: 400px;
+    }
+    .govuk-button--export {
+      font-family: "GDS Transport", arial, sans-serif;
+      font-size: 14px;
+      padding: 6px 16px;
+      background: #00703c;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      border-radius: 2px;
+    }
+    .govuk-button--export:hover {
+      background: #005a30;
+    }
+    .codex-editor { font-family: "GDS Transport", arial, sans-serif; }
+  </style>
+</head>
+<body class="govuk-frontend-supported">
+  <div class="demo-header">
+    <div class="demo-header-inner">
+      <div>
+        <h1>Editor.js GOV.UK Frontend Plugin</h1>
+        <p>WYSIWYG editing of GOV.UK Design System components</p>
+      </div>
+      <span class="demo-badge">DEMO</span>
+    </div>
+  </div>
+
+  <div class="demo-container">
+    <div class="demo-panel">
+      <div class="demo-panel-header">
+        <h2>Editor</h2>
+        <button id="export-btn" class="govuk-button--export">Save and preview</button>
+      </div>
+      <div class="demo-panel-body">
+        <div id="editorjs"></div>
+      </div>
+    </div>
+    <div class="demo-sidebar">
+      <button id="floating-export-btn" class="govuk-button--export">Save and preview</button>
+    </div>
+  </div>
+
+  <script type="module" src="./demo.ts"></script>
+</body>
+</html>
