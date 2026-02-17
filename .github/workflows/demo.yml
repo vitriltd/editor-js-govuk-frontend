@@ -26,6 +26,8 @@ jobs:
 
       - run: npm ci
       - run: npm run build:demo
+      - name: Fix govuk-frontend asset paths for GitHub Pages subpath
+        run: sed -i 's|url(/assets/|url(/editor-js-govuk-frontend/assets/|g' demo-dist/assets/*.css
 
       - uses: actions/upload-pages-artifact@v3
         with:
