@@ -7,15 +7,17 @@ export interface TagData {
   classes: string;
 }
 
+// GOV.UK Frontend v6 tag colours. v6 removed `--blue` (the default tag is
+// already blue) and `--light-blue`, and deprecated `--turquoise`/`--pink` in
+// favour of `--teal`/`--magenta`. Legacy values in saved documents are carried
+// across by the v6 tag-colour migration (see src/migrate/registry.ts).
 export const TAG_COLOURS = [
   { label: 'Default (blue)', classes: '' },
   { label: 'Grey', classes: 'govuk-tag--grey' },
   { label: 'Green', classes: 'govuk-tag--green' },
-  { label: 'Turquoise', classes: 'govuk-tag--turquoise' },
-  { label: 'Blue', classes: 'govuk-tag--blue' },
-  { label: 'Light blue', classes: 'govuk-tag--light-blue' },
+  { label: 'Teal', classes: 'govuk-tag--teal' },
   { label: 'Purple', classes: 'govuk-tag--purple' },
-  { label: 'Pink', classes: 'govuk-tag--pink' },
+  { label: 'Magenta', classes: 'govuk-tag--magenta' },
   { label: 'Red', classes: 'govuk-tag--red' },
   { label: 'Orange', classes: 'govuk-tag--orange' },
   { label: 'Yellow', classes: 'govuk-tag--yellow' },

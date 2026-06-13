@@ -107,13 +107,12 @@ function toMacroParams(toolName: string, data: Record<string, any>): Record<stri
       };
 
     case 'button': {
+      // GOV.UK Frontend v6 derives the element from `href` (link if present,
+      // otherwise a <button>); the old `element` param is no longer supported.
       const params: Record<string, any> = {
         text: data.text,
         classes: data.classes || undefined,
       };
-      if (data.element && data.element !== 'button') {
-        params.element = data.element;
-      }
       if (data.href) {
         params.href = data.href;
       }

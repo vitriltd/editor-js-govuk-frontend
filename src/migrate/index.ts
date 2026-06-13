@@ -47,11 +47,12 @@ export function migrate(data: GovukOutputData, options?: MigrateOptions): GovukO
 
   let blocks = data.blocks;
 
-  // If the major version differs, apply any registered migrations
+  // If the major version differs, apply any registered migrations. Global
+  // (`'*'`) migrations run for every block, followed by type-specific ones.
   if (inputMajor !== currentMajor) {
     blocks = blocks.map((block) => {
-      const migrations = reg[block.type];
-      if (!migrations) return block;
+      const migrations = [...(reg['*'] ?? []), ...(reg[block.type] ?? [])];
+      if (migrations.length === 0) return block;
 
       let blockData = { ...block.data };
       for (const migration of migrations) {
