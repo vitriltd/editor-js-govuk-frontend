@@ -27,6 +27,7 @@
   "scripts": {
     "precompile": "tsx scripts/precompile-templates.ts",
     "build": "npm run precompile && vite build",
+    "prepublishOnly": "npm run build",
     "dev": "npm run precompile && VITE_DEV=1 vite --config vite.dev.config.ts",
     "build:demo": "npm run precompile && vite build --config vite.dev.config.ts && cp -r node_modules/govuk-frontend/dist/govuk/assets/. demo-dist/assets/",
     "test": "vitest run",

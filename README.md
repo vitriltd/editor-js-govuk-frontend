@@ -50,6 +50,19 @@ const editor = new EditorJS({
 })
 ```
 
+## Security
+
+`renderToHtml()` / `migrate()` produce **raw HTML** that includes the rich-text content authored in the editor (bold, links, inline tags, etc.). This is by design — it's what makes the output render as real GOV.UK components.
+
+**If your content authors are not fully trusted, or saved JSON can reach the renderer from an untrusted source, sanitise the output before inserting it into the DOM** — for example with [DOMPurify](https://github.com/cure53/DOMPurify):
+
+```ts
+import DOMPurify from 'dompurify'
+container.innerHTML = DOMPurify.sanitize(renderToHtml(data))
+```
+
+The library applies defence-in-depth — structural fields (sizes, list styles) are allow-listed, and `javascript:`/`data:` href schemes are stripped — and the editor tools set Editor.js `sanitize` configs. **These are not a substitute for sanitising untrusted output** (they don't, for example, decode HTML-entity-encoded payloads or strip event-handler attributes). When authors are trusted (e.g. an authenticated internal CMS), no extra sanitisation is required.
+
 ## Configuration
 
 `govukTools()` accepts an options object to control which components are enabled and to pass per-component config:

@@ -341,3 +341,87 @@ describe('renderToHtml', () => {
     });
   });
 });
+
+describe('Security hardening', () => {
+  describe('structural-field allow-listing (no attribute injection)', () => {
+    it('falls back to the default for a malicious paragraph size', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'paragraph',
+        data: { text: 'x', size: 'body"><script>alert(1)</script>' },
+      }));
+      expect(html).toBe('<p class="govuk-body">x</p>');
+      expect(html).not.toContain('<script>');
+    });
+
+    it('keeps valid paragraph sizes', () => {
+      expect(renderToHtml(makeOutput({ type: 'paragraph', data: { text: 'x', size: 'body-l' } })))
+        .toBe('<p class="govuk-body-l">x</p>');
+      expect(renderToHtml(makeOutput({ type: 'paragraph', data: { text: 'x', size: 'body-s' } })))
+        .toBe('<p class="govuk-body-s">x</p>');
+    });
+
+    it('falls back to bullet for a malicious list style', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'list',
+        data: { style: 'bullet"><script>alert(1)</script>', items: ['a'] },
+      }));
+      expect(html).toContain('<ul class="govuk-list govuk-list--bullet">');
+      expect(html).not.toContain('<script>');
+    });
+
+    it('keeps the valid number list style', () => {
+      const html = renderToHtml(makeOutput({ type: 'list', data: { style: 'number', items: ['a'] } }));
+      expect(html).toContain('<ol class="govuk-list govuk-list--number">');
+    });
+
+    it('falls back to xl for a malicious section-break size', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'sectionBreak',
+        data: { size: 'xl"><script>alert(1)</script>', visible: true },
+      }));
+      expect(html).toBe('<hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">');
+      expect(html).not.toContain('<script>');
+    });
+  });
+
+  describe('href scheme sanitisation', () => {
+    it('neutralises javascript: links in rich text', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'paragraph',
+        data: { text: 'Click <a href="javascript:alert(1)">here</a>', size: 'body' },
+      }));
+      expect(html).not.toContain('javascript:');
+      expect(html).toContain('href="#"');
+    });
+
+    it('neutralises schemes obfuscated with control characters', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'paragraph',
+        data: { text: '<a href="java\tscript:alert(1)">x</a>', size: 'body' },
+      }));
+      expect(html).toContain('href="#"');
+      expect(html).not.toContain('script:');
+    });
+
+    it('preserves http(s), relative, and mailto links', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'paragraph',
+        data: {
+          text: '<a href="https://gov.uk">a</a> <a href="/help">b</a> <a href="mailto:x@y.gov">c</a>',
+          size: 'body',
+        },
+      }));
+      expect(html).toContain('href="https://gov.uk"');
+      expect(html).toContain('href="/help"');
+      expect(html).toContain('href="mailto:x@y.gov"');
+    });
+
+    it('neutralises a javascript: button href', () => {
+      const html = renderToHtml(makeOutput({
+        type: 'button',
+        data: { text: 'Go', href: 'javascript:alert(1)' },
+      }));
+      expect(html).not.toContain('javascript:');
+    });
+  });
+});
