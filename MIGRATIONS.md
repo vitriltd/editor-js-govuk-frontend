@@ -199,9 +199,14 @@ interface BlockMigration {
 
 ```ts
 type MigrationRegistry = Record<string, BlockMigration[]>;
-// Key: block tool type name (e.g. 'heading', 'warningText')
+// Key:   block tool type name (e.g. 'heading', 'warningText'), or '*' for a
+//        migration that runs on every block regardless of type
 // Value: ordered array of migrations, earliest first
 ```
+
+The special `'*'` key holds migrations that run for **every** block, before the
+type-specific ones. This is useful for changes that can appear inside any
+rich-text block — for example an inline class rename embedded in a block's HTML.
 
 ### Adding a migration
 
@@ -232,6 +237,20 @@ warningText: [
 ```
 
 The system applies all migrations where `fromMajor` falls between the document's major version (inclusive) and the current major version (exclusive), in array order.
+
+### Example: the GOV.UK Frontend v6 tag-colour migration
+
+The plugin's first real migration (plugin major 0 → 1) handles GOV.UK Frontend v6's Tag colour changes: `--turquoise` → `--teal`, `--pink` → `--magenta`, and the removed `--light-blue` / `--blue` fall back to the default (blue) tag.
+
+Tags appear both as standalone Tag blocks (colour in `data.classes`) and as inline tags inside rich text (colour in the block's HTML), so the migration is registered under the global `'*'` key and rewrites the colour classes in every string of a block's data:
+
+```ts
+export const registry: MigrationRegistry = {
+  '*': [{ fromMajor: 0, migrate: (data) => deepMapStrings(data, rewriteTagColours) }],
+};
+```
+
+See `src/migrate/registry.ts` for the `rewriteTagColours` and `deepMapStrings` helpers.
 
 ### Guidelines
 

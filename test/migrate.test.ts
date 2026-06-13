@@ -163,3 +163,81 @@ describe('block migrations', () => {
     expect(second).toEqual(first);
   });
 });
+
+describe('GOV.UK Frontend v6 tag colour migration', () => {
+  // Uses the real default registry; version 1.0.0 crosses the major boundary.
+  const toV1: MigrateOptions = { version: '1.0.0' };
+
+  it('renames deprecated standalone Tag colours (turquoise→teal, pink→magenta)', () => {
+    const input = makeSavedData([
+      { type: 'tag', data: { text: 'A', classes: 'govuk-tag--turquoise' } },
+      { type: 'tag', data: { text: 'B', classes: 'govuk-tag--pink' } },
+    ]);
+    const result = migrate(input, toV1);
+    expect(result.blocks[0].data.classes).toBe('govuk-tag--teal');
+    expect(result.blocks[1].data.classes).toBe('govuk-tag--magenta');
+    expect(result.renderedHtml).toContain('govuk-tag--teal');
+    expect(result.renderedHtml).toContain('govuk-tag--magenta');
+    expect(result.renderedHtml).not.toContain('govuk-tag--turquoise');
+    expect(result.renderedHtml).not.toContain('govuk-tag--pink');
+  });
+
+  it('drops removed standalone Tag colours (blue, light-blue) back to the default', () => {
+    const input = makeSavedData([
+      { type: 'tag', data: { text: 'A', classes: 'govuk-tag--light-blue' } },
+      { type: 'tag', data: { text: 'B', classes: 'govuk-tag--blue' } },
+    ]);
+    const result = migrate(input, toV1);
+    expect(result.blocks[0].data.classes).toBe('');
+    expect(result.blocks[1].data.classes).toBe('');
+  });
+
+  it('leaves already-valid colours and the default unchanged', () => {
+    const input = makeSavedData([
+      { type: 'tag', data: { text: 'A', classes: 'govuk-tag--green' } },
+      { type: 'tag', data: { text: 'B', classes: '' } },
+    ]);
+    const result = migrate(input, toV1);
+    expect(result.blocks[0].data.classes).toBe('govuk-tag--green');
+    expect(result.blocks[1].data.classes).toBe('');
+  });
+
+  it('rewrites inline tag colours embedded in rich text', () => {
+    const input = makeSavedData([
+      {
+        type: 'paragraph',
+        data: {
+          text:
+            'See <strong class="govuk-tag govuk-tag--pink">NEW</strong> and ' +
+            '<strong class="govuk-tag govuk-tag--light-blue">OLD</strong>.',
+          size: 'body',
+        },
+      },
+    ]);
+    const result = migrate(input, toV1);
+    expect(result.blocks[0].data.text).toContain(
+      '<strong class="govuk-tag govuk-tag--magenta">NEW</strong>'
+    );
+    expect(result.blocks[0].data.text).toContain('<strong class="govuk-tag">OLD</strong>');
+    expect(result.blocks[0].data.text).not.toContain('govuk-tag--pink');
+    expect(result.blocks[0].data.text).not.toContain('light-blue');
+  });
+
+  it('only migrates across a major-version boundary', () => {
+    const input = makeSavedData(
+      [{ type: 'tag', data: { text: 'A', classes: 'govuk-tag--pink' } }],
+      { pluginVersion: '1.0.0' } // already v1 → no block migration, re-render only
+    );
+    const result = migrate(input, toV1);
+    expect(result.blocks[0].data.classes).toBe('govuk-tag--pink');
+  });
+
+  it('is idempotent', () => {
+    const input = makeSavedData([
+      { type: 'tag', data: { text: 'A', classes: 'govuk-tag--turquoise' } },
+    ]);
+    const first = migrate(input, toV1);
+    const second = migrate(first, toV1);
+    expect(second).toEqual(first);
+  });
+});

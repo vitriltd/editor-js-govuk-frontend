@@ -1,6 +1,6 @@
 {
   "name": "@vitriltd/editor-js-govuk-frontend",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Editor.js block tools that render GOV.UK Design System components",
   "type": "module",
@@ -35,7 +35,7 @@
   "devDependencies": {
     "@editorjs/editorjs": "^2.30.0",
     "@types/node": "^25.2.3",
-    "govuk-frontend": "^5.8.0",
+    "govuk-frontend": "^6.2.0",
     "highlight.js": "^11.11.1",
     "nunjucks": "^3.2.4",
     "tsx": "^4.19.0",
@@ -46,6 +46,12 @@
     "vitest": "^3.0.0"
   },
   "peerDependencies": {
-    "@editorjs/editorjs": "^2.x"
+    "@editorjs/editorjs": "^2.x",
+    "govuk-frontend": "^6.0.0"
+  },
+  "peerDependenciesMeta": {
+    "govuk-frontend": {
+      "optional": true
+    }
   }
 }

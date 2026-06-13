@@ -28,6 +28,15 @@ npm install @vitriltd/editor-js-govuk-frontend @editorjs/editorjs
 
 Requires `@editorjs/editorjs` v2.x as a peer dependency.
 
+The plugin emits **GOV.UK Frontend v6** markup. Your application is responsible for
+loading matching GOV.UK Frontend v6 CSS, JavaScript and assets (fonts and images) —
+for example from the [`govuk-frontend`](https://www.npmjs.com/package/govuk-frontend)
+package, which is declared as an optional peer dependency.
+
+> Upgrading from a pre-1.0 release? GOV.UK Frontend v6 renamed some Tag colours.
+> Run your saved documents through the migration tool to bring them up to date —
+> see [MIGRATIONS.md](./MIGRATIONS.md).
+
 ## Quick start
 
 ```ts
