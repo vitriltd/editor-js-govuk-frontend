@@ -16,20 +16,46 @@ const linkClassByBlockType: Record<string, string> = {
   notificationBanner: 'govuk-notification-banner__link',
 };
 
+/** URL schemes allowed in `href`. Everything else is treated as unsafe. */
+const SAFE_URL_SCHEME = /^(?:https?|mailto|tel):/i;
+
 /**
- * Add GDS link classes to bare `<a>` tags in rendered HTML.
- * If the `<a>` already has a `class` attribute, the link class is appended
- * (unless already present). If there is no `class`, one is added.
+ * Neutralise dangerous URL schemes (`javascript:`, `data:`, `vbscript:`, …) in an
+ * href, returning `#` when the scheme is not allow-listed. Relative URLs and
+ * anchors (no scheme) pass through unchanged.
+ *
+ * Defence-in-depth only — it does not decode HTML entities, so it is NOT a
+ * substitute for sanitising untrusted rich-text output (see the Security section
+ * of the README).
+ */
+function sanitizeUrl(raw: string): string {
+  // Browsers ignore ASCII control chars/whitespace when parsing a scheme.
+  const cleaned = raw.replace(/[\u0000-\u0020]/g, '');
+  if (/^[a-z][a-z0-9+.-]*:/i.test(cleaned) && !SAFE_URL_SCHEME.test(cleaned)) {
+    return '#';
+  }
+  return raw;
+}
+
+/**
+ * Add GDS link classes to bare `<a>` tags in rendered HTML, and neutralise
+ * dangerous href schemes. If the `<a>` already has a `class` attribute, the link
+ * class is appended (unless already present); otherwise one is added.
  */
 function addLinkClasses(html: string, blockType: string): string {
   const linkClass = linkClassByBlockType[blockType] ?? 'govuk-link';
 
-  return html.replace(/<a\b([^>]*)>/g, (match, attrs: string) => {
+  return html.replace(/<a\b([^>]*)>/g, (_match, rawAttrs: string) => {
+    const attrs = rawAttrs.replace(
+      /(\bhref\s*=\s*)(["'])([\s\S]*?)\2/i,
+      (_m, pre: string, quote: string, url: string) => pre + quote + sanitizeUrl(url) + quote
+    );
+
     const classMatch = attrs.match(/class="([^"]*)"/);
     if (classMatch) {
       const existing = classMatch[1];
       if (existing.split(/\s+/).includes(linkClass)) {
-        return match; // already has the class
+        return `<a${attrs}>`;
       }
       return `<a${attrs.replace(`class="${existing}"`, `class="${existing} ${linkClass}"`)}>`;
     }
@@ -45,6 +71,13 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+// Allow-lists for structural fields interpolated into `class` attributes. Any
+// other value falls back to the default, so untrusted data can't break out of
+// the attribute (these are enums, never rich text — unlike `text`/`html`).
+const PARAGRAPH_SIZES = new Set(['body-l', 'body', 'body-s']);
+const LIST_STYLES = new Set(['bullet', 'number']);
+const SECTION_BREAK_SIZES = new Set(['xl', 'l', 'm']);
+
 /** Direct HTML renderers for simple components */
 const directRenderers: Record<string, BlockRenderer> = {
   heading: (data) => {
@@ -54,19 +87,19 @@ const directRenderers: Record<string, BlockRenderer> = {
   },
 
   paragraph: (data) => {
-    const cls = `govuk-${data.size ?? 'body'}`;
-    return `<p class="${cls}">${data.text}</p>`;
+    const size = PARAGRAPH_SIZES.has(data.size) ? data.size : 'body';
+    return `<p class="govuk-${size}">${data.text}</p>`;
   },
 
   list: (data) => {
-    const tag = data.style === 'number' ? 'ol' : 'ul';
-    const cls = `govuk-list govuk-list--${data.style ?? 'bullet'}`;
+    const style = LIST_STYLES.has(data.style) ? data.style : 'bullet';
+    const tag = style === 'number' ? 'ol' : 'ul';
     const items = (data.items ?? []).map((item: string) => `  <li>${item}</li>`).join('\n');
-    return `<${tag} class="${cls}">\n${items}\n</${tag}>`;
+    return `<${tag} class="govuk-list govuk-list--${style}">\n${items}\n</${tag}>`;
   },
 
   sectionBreak: (data) => {
-    const size = data.size ?? 'xl';
+    const size = SECTION_BREAK_SIZES.has(data.size) ? data.size : 'xl';
     const visible = data.visible !== false ? ' govuk-section-break--visible' : '';
     return `<hr class="govuk-section-break govuk-section-break--${size}${visible}">`;
   },
@@ -114,7 +147,7 @@ function toMacroParams(toolName: string, data: Record<string, any>): Record<stri
         classes: data.classes || undefined,
       };
       if (data.href) {
-        params.href = data.href;
+        params.href = sanitizeUrl(String(data.href));
       }
       return params;
     }
