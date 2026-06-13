@@ -1,6 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { execFile } from 'node:child_process';
 import { resolve } from 'node:path';
+
+// Each test spawns a real `npx tsx` subprocess, which cold-starts a TypeScript
+// compile. Under parallel test workers that can take several seconds, so allow
+// well beyond Vitest's 5s default to avoid flaky timeouts on busy machines/CI.
+vi.setConfig({ testTimeout: 30_000 });
 
 const CLI_PATH = resolve(__dirname, '../src/cli/migrate.ts');
 
