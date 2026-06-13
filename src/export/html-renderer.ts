@@ -141,11 +141,11 @@ function toMacroParams(toolName: string, data: Record<string, any>): Record<stri
     case 'table':
       return {
         head: (data.head ?? []).map((cell: any) => ({
-          html: cell.html ?? cell.text ?? '',
+          html: cell.html ?? '',
         })),
         rows: (data.rows ?? []).map((row: any[]) =>
           row.map((cell: any) => ({
-            html: cell.html ?? cell.text ?? '',
+            html: cell.html ?? '',
           }))
         ),
       };
@@ -155,7 +155,7 @@ function toMacroParams(toolName: string, data: Record<string, any>): Record<stri
         rows: (data.rows ?? []).map((row: any) => ({
           key: row.key,
           value: {
-            html: row.value?.html ?? row.value?.text ?? '',
+            html: row.value?.html ?? '',
           },
         })),
       };

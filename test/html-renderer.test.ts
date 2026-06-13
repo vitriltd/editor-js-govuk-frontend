@@ -173,18 +173,6 @@ describe('renderToHtml', () => {
       expect(html).toContain('Alice');
     });
 
-    it('falls back from text to html for old data format', () => {
-      const html = renderToHtml(makeOutput({
-        type: 'table',
-        data: {
-          head: [{ text: 'Name' }],
-          rows: [[{ text: 'Bob' }]],
-        },
-      }));
-      expect(html).toContain('Name');
-      expect(html).toContain('Bob');
-    });
-
     it('renders table cells with tag markup', () => {
       const html = renderToHtml(makeOutput({
         type: 'table',
@@ -212,16 +200,6 @@ describe('renderToHtml', () => {
       expect(html).toContain('Sarah');
     });
 
-    it('falls back from text to html for old value format', () => {
-      const html = renderToHtml(makeOutput({
-        type: 'summaryList',
-        data: {
-          rows: [{ key: { text: 'Name' }, value: { text: 'Sarah' } }],
-        },
-      }));
-      expect(html).toContain('govuk-summary-list');
-      expect(html).toContain('Sarah');
-    });
   });
 
   describe('Accordion (Nunjucks)', () => {
