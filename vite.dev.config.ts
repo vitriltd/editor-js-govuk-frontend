@@ -1,5 +1,8 @@
 import { defineConfig, type Plugin } from 'vite';
 import path, { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+
+const pkg = JSON.parse(readFileSync(resolve(__dirname, 'package.json'), 'utf-8'));
 
 /**
  * Vite plugin that rewrites `/assets/*` requests to serve files from
@@ -29,6 +32,9 @@ function govukAssets(): Plugin {
 export default defineConfig({
   root: 'demo',
   base: process.env.CI ? '/editor-js-govuk-frontend/' : undefined,
+  define: {
+    __PLUGIN_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [govukAssets()],
   server: {
     port: 3000,

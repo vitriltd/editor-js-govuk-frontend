@@ -13,6 +13,7 @@ import type EditorJS from '@editorjs/editorjs';
 import './styles/editor-overrides.css';
 
 import { renderToHtml } from './export/html-renderer.js';
+import { PLUGIN_VERSION } from './version.js';
 
 // Configuration helper
 export { govukTools } from './govuk-tools.js';
@@ -23,13 +24,22 @@ export { renderToHtml };
 
 export interface GovukOutputData extends OutputData {
   renderedHtml: string;
+  pluginVersion: string;
 }
 
 export async function saveWithHtml(editor: EditorJS): Promise<GovukOutputData> {
   const data = await editor.save();
   const renderedHtml = renderToHtml(data);
-  return { ...data, renderedHtml };
+  return { ...data, renderedHtml, pluginVersion: PLUGIN_VERSION };
 }
+
+// Migration
+export { migrate } from './migrate/index.js';
+export type { MigrateOptions } from './migrate/index.js';
+export type { BlockMigration, MigrationRegistry } from './migrate/registry.js';
+
+// Version
+export { PLUGIN_VERSION } from './version.js';
 
 // Nunjucks runtime (for advanced usage)
 export { renderComponent } from './nunjucks-runtime.js';
